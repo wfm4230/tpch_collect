@@ -13,7 +13,7 @@ STREAM_COUNT=$2
 RUNTIME_DIR="./runtime"
 TEMPLATES_DIR="./templates"
 
-if [ ! -d RUNTIME_DIR]; then
+if [ ! -d $RUNTIME_DIR ]; then
   echo "you should run power test first"
   exit 1
 fi
