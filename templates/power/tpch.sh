@@ -61,14 +61,14 @@ function benchmark_run() {
           print_log "data loaded already."
         else
           if [ $STORAGE == 'row' ]; then
-	    print_log "  loading data"
-	    psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-load.sql.row > $RESULTS/load.log 2> $RESULTS/load.err
+			print_log "  loading data"
+			psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-load.sql.row > $RESULTS/load.log 2> $RESULTS/load.err
 
-	    print_log "  creating primary keys"
-	    psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-pkeys.sql.row > $RESULTS/pkeys.log 2> $RESULTS/pkeys.err
+			print_log "  creating primary keys"
+			psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-pkeys.sql.row > $RESULTS/pkeys.log 2> $RESULTS/pkeys.err
 
-	    #print_log "  creating foreign keys"
-	    #psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-alter.sql > $RESULTS/alter.log 2> $RESULTS/alter.err
+			print_log "  creating foreign keys"
+			psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-alter.sql > $RESULTS/alter.log 2> $RESULTS/alter.err
           elif [ $STORAGE == 'column' ]; then
             print_log "  loading data"
             psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-load.sql.column > $RESULTS/load.log 2> $RESULTS/load.err
@@ -76,8 +76,8 @@ function benchmark_run() {
             print_log "  creating primary keys"
             psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-pkeys.sql.column > $RESULTS/pkeys.log 2> $RESULTS/pkeys.err
 
-            #print_log "  creating foreign keys"
-            #psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-alter.sql > $RESULTS/alter.log 2> $RESULTS/alter.err
+            print_log "  creating foreign keys"
+            psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-alter.sql > $RESULTS/alter.log 2> $RESULTS/alter.err
           elif [ $STORAGE == 'redshift' ]; then
             print_log "  create table"
             psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-create.sql.redshift > $RESULTS/create.log 2> $RESULTS/create.err
@@ -89,39 +89,39 @@ function benchmark_run() {
               psql -h $IP -p $PORT -U $USER $DBNAME -c "copy ${table} from '$S3/${table}.manifest' credentials 'aws_access_key_id=$EC2_ID;aws_secret_access_key=$EC2_KEY' delimiter '|' ssh" >> $RESULTS/load.log 2>> $RESULTS/load.err
             done
 
-            #print_log "  creating foreign keys"
-            #psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-alter.sql > $RESULTS/alter.log 2> $RESULTS/alter.err
+            print_log "  creating foreign keys"
+            psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-alter.sql > $RESULTS/alter.log 2> $RESULTS/alter.err
           elif [ $STORAGE == 'pg' ]; then
-	    print_log "  loading data"
-	    psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-load.sql.pg > $RESULTS/load.log 2> $RESULTS/load.err
+			print_log "  loading data"
+			psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-load.sql.pg > $RESULTS/load.log 2> $RESULTS/load.err
 
-	    print_log "  creating primary keys"
-	    psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-pkeys.sql.row > $RESULTS/pkeys.log 2> $RESULTS/pkeys.err
+			print_log "  creating primary keys"
+			psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-pkeys.sql.row > $RESULTS/pkeys.log 2> $RESULTS/pkeys.err
 
-	    #print_log "  creating foreign keys"
-	    #psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-alter.sql > $RESULTS/alter.log 2> $RESULTS/alter.err
+			print_log "  creating foreign keys"
+			psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-alter.sql > $RESULTS/alter.log 2> $RESULTS/alter.err
           elif [ $STORAGE == 'citus' ]; then
-	    print_log "  loading data"
-	    psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-load.sql.citus > $RESULTS/load.log 2> $RESULTS/load.err
+			print_log "  loading data"
+			psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-load.sql.citus > $RESULTS/load.log 2> $RESULTS/load.err
 
-	    print_log "  creating primary keys"
-	    psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-pkeys.sql.citus > $RESULTS/pkeys.log 2> $RESULTS/pkeys.err
-	  elif [ $STORAGE == 'pg10' ]; then
-	    print_log "  loading data"
-	    psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-load.sql.pg > $RESULTS/load.log 2> $RESULTS/load.err
-          fi
+			print_log "  creating primary keys"
+			psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-pkeys.sql.citus > $RESULTS/pkeys.log 2> $RESULTS/pkeys.err
+	  	  elif [ $STORAGE == 'pg10' ]; then
+			print_log "  loading data"
+			psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-load.sql.pg > $RESULTS/load.log 2> $RESULTS/load.err
+		  fi
 
-          if [ $STORAGE == 'pg10' ]; then
-	    print_log "  analyzing"
-	    psql -h $IP -p $PORT -U $USER $DBNAME -c "set default_statistics_target =1000; analyze;" > $RESULTS/analyze.log 2> $RESULTS/analyze.err
-          else
-	    print_log "  creating indexes"
-	    psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-index.sql.citus > $RESULTS/index.log 2> $RESULTS/index.err
+		  if [ $STORAGE == 'pg10' ]; then
+			print_log "  analyzing"
+			psql -h $IP -p $PORT -U $USER $DBNAME -c "set default_statistics_target =1000; analyze;" > $RESULTS/analyze.log 2> $RESULTS/analyze.err
+		  else
+			print_log "  creating indexes"
+			psql -h $IP -p $PORT -U $USER $DBNAME < dss/tpch-index.sql.citus > $RESULTS/index.log 2> $RESULTS/index.err
 
-	    print_log "  analyzing"
-	    psql -h $IP -p $PORT -U $USER $DBNAME -c "analyze" > $RESULTS/analyze.log 2> $RESULTS/analyze.err
-          fi
-        fi
+			print_log "  analyzing"
+			psql -h $IP -p $PORT -U $USER $DBNAME -c "analyze" > $RESULTS/analyze.log 2> $RESULTS/analyze.err
+		  fi
+		fi
 
 	print_log "running TPC-H benchmark"
 
