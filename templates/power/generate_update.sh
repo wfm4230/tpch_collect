@@ -6,7 +6,7 @@ fi
 SF=$1
 STREAM_COUNT=$2
 rm -rf dss/updates
-mkdir dss/updates
+mkdir -p dss/updates
 SRC_DATA=../../test_data/${SF}G/updates
 rm -rf $SRC_DATA
 mkdir -p $SRC_DATA
