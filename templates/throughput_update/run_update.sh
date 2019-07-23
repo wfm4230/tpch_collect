@@ -73,7 +73,7 @@ function benchmark_dss() {
 		print_log "  running rf1 sql $n"
 		/usr/bin/time -a -f "rf1_u$n = %e" -o $RESULTS/results.log psql -h $IP -p $PORT -U $USER $DBNAME < $u1 > $RESULTS/results/rf1_u$n 2> $RESULTS/errors/$n
 		
-                u2="dss/updates/rf2_u$n.sql"
+        u2="dss/updates/rf2_u$n.sql"
 		print_log "  running rf2 sql $n"
 		/usr/bin/time -a -f "rf2_u$n = %e" -o $RESULTS/results.log psql -h $IP -p $PORT -U $USER $DBNAME < $u2 > $RESULTS/results/rf2_u$n 2> $RESULTS/errors/$n
 

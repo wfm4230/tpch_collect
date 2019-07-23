@@ -125,7 +125,7 @@ function benchmark_run() {
 
 	print_log "running TPC-H benchmark"
 
-	benchmark_dss $RESULTS
+	benchmark_dss
 
 	print_log "finished TPC-H benchmark"
 
@@ -154,7 +154,7 @@ function benchmark_dss() {
 	do
 
 		q="dss/queries/$n.sql"
-		qe="dss/queries/$n.explain.sql"
+		#qe="dss/queries/$n.explain.sql"
 
 		if [ -f "$q" ]; then
 
@@ -162,8 +162,8 @@ function benchmark_dss() {
 
 			echo "======= query $n =======" >> $RESULTS/data.log 2>&1;
 
-			print_log "run explain"
-			psql -h $IP -p $PORT -U $USER $DBNAME < $qe > $RESULTS/explain/$n 2>> $RESULTS/explain.err
+			#print_log "run explain"
+			#psql -h $IP -p $PORT -U $USER $DBNAME < $qe > $RESULTS/explain/$n 2>> $RESULTS/explain.err
 
 			vmstat -s > $RESULTS/vmstat-s/before-$n.log 2>&1
 			vmstat -d > $RESULTS/vmstat-d/before-$n.log 2>&1
@@ -186,13 +186,13 @@ function benchmark_dss() {
 						print_log "    killing query $n (timeout)"
 
 						echo "$q : timeout" >> $RESULTS/results.log
-						psql -h $IP -p $PORT -U $USER $DBNAME -c "SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname = 'tpch'" >> $RESULTS/queries.err 2>&1;
+						psql -h $IP -p $PORT -U $USER $DBNAME -c "SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname = '${DBNAME}'" >> $RESULTS/queries.err 2>&1;
 
 						# time to do a cleanup
 						sleep 10;
 
 						# just check how many backends are there (should be 0)
-						psql -h $IP -p $PORT -U $USER $DBNAME -c "SELECT COUNT(*) AS tpch_backends FROM pg_stat_activity WHERE datname = 'tpch'" >> $RESULTS/queries.err 2>&1;
+						psql -h $IP -p $PORT -U $USER $DBNAME -c "SELECT COUNT(*) AS tpch_backends FROM pg_stat_activity WHERE datname = '${DBNAME}'" >> $RESULTS/queries.err 2>&1;
 
 					else
 						# the query is still running and we have time left, sleep another second
@@ -219,7 +219,7 @@ function benchmark_dss() {
 	
         u2="dss/updates/rf2_u1.sql"
         print_log "  running rf2 sql $n"
-        /usr/bin/time -a -f "rf2_u1 = %e" -o $RESULTS/results.log psql -h $IP -p $PORT -U $USER $DBNAME < $u1 > $RESULTS/results/rf2_u1 2> $RESULTS/errors/rf2_u1
+        /usr/bin/time -a -f "rf2_u1 = %e" -o $RESULTS/results.log psql -h $IP -p $PORT -U $USER $DBNAME < $u1 > $RESULTS/results/rf2_u2 2> $RESULTS/errors/rf2_u1
 
 	# collect stats again
 	psql -h $IP -p $PORT -U $USER $DBNAME -c "SELECT * FROM pg_stat_bgwriter" > $RESULTS/stats-after.log 2>> $RESULTS/stats-after.err

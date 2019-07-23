@@ -114,34 +114,12 @@
 
 	}
 
-	/* loads updates stats from the directory (expects results.log file) */
-	/* param $dir - directory with benchmark results */
-	function load_updates($dir) {
-
-		$updates = array();
-		$results = file("$dir/results.log");
-
-		foreach ($results AS $line) {
-
-			if (strpos($line, "rf1") === 0) {
-				$tmp = explode('=', $line);
-				$updates[1]['duration'] = floatval($tmp[1]);
-			} else if (strpos($line, "rf2") === 0) {
-				$tmp = explode('=', $line);
-				$updates[2]['duration'] = floatval($tmp[1]);
-			}
-		}
-
-		return $updates;
-	}
-
 	/* loads tpc-h results from the directory */
 	/* param $dir - directory with benchmark results */
 	function load_tpch($dir) {
 		$out = array();
 		$out['stats'] = load_stats($dir);
 		$out['queries'] = load_queries($dir);
-		$out['updates'] = load_updates($dir);
 		return $out;
 	}
 
@@ -177,30 +155,12 @@
 
 		for ($i = 0; $i < count($log); $i++) {
 			$matches = array();
-			if (preg_match('/[0-9][0-9]:[0-9][0-9]:[0-9][0-9] \[([0-9]+)\] : preparing TPC-H database/', $log[$i], $matches)) {
-				$t = intval($matches[1]);
-			} else if (preg_match('/[0-9][0-9]:[0-9][0-9]:[0-9][0-9] \[([0-9]+)\] :   loading data/', $log[$i], $matches)) {
-				$t = intval($matches[1]);
-			} else if (preg_match('/[0-9][0-9]:[0-9][0-9]:[0-9][0-9] \[([0-9]+)\] :   creating primary keys/', $log[$i], $matches)) {
-				$data['stats']['load'] = intval($matches[1]) - $t;
-				$t = intval($matches[1]);
-			} else if (preg_match('/[0-9][0-9]:[0-9][0-9]:[0-9][0-9] \[([0-9]+)\] :   creating foreign keys/', $log[$i], $matches)) {
-				$data['stats']['pkeys'] = intval($matches[1]) - $t;
-				$t = intval($matches[1]);
-			} else if (preg_match('/[0-9][0-9]:[0-9][0-9]:[0-9][0-9] \[([0-9]+)\] :   creating indexes/', $log[$i], $matches)) {
-				$data['stats']['fkeys'] = intval($matches[1]) - $t;
-				$t = intval($matches[1]);
-			} else if (preg_match('/[0-9][0-9]:[0-9][0-9]:[0-9][0-9] \[([0-9]+)\] :   analyzing/', $log[$i], $matches)) {
-				$data['stats']['indexes'] = intval($matches[1]) - $t;
-				$t = intval($matches[1]);
-			} else if (preg_match('/[0-9][0-9]:[0-9][0-9]:[0-9][0-9] \[([0-9]+)\] : running TPC-H benchmark/', $log[$i], $matches)) {
-				$data['stats']['analyze'] = intval($matches[1]) - $t;
+		    if (preg_match('/[0-9][0-9]:[0-9][0-9]:[0-9][0-9] \[([0-9]+)\] : running TPC-H benchmark/', $log[$i], $matches)) {
 				$t = intval($matches[1]);
 			} else if (preg_match('/[0-9][0-9]:[0-9][0-9]:[0-9][0-9] \[([0-9]+)\] : finished TPC-H benchmark/', $log[$i], $matches)) {
 				$data['stats']['benchmark'] = intval($matches[1]) - $t;
 				$t = intval($matches[1]);
 			}
-
 		}
 
 	}
@@ -212,26 +172,21 @@
 
 		$fd = fopen($outfile, "a");
 
-		fwrite($fd, 'tpch_load;tpch_pkeys;tpch_fkeys;tpch_indexes;tpch_analyze;tpch_total;' .
+		fwrite($fd, 'tpch_total;' .
 					'query_1;query_2;query_3;query_4;query_5;query_6;query_7;query_8;query_9;query_10;query_11;query_12;query_13;' .
-					'query_14;query_15;query_16;query_17;query_18;query_19;query_20;query_21;query_22;rf1;rf2;'.
+					'query_14;query_15;query_16;query_17;query_18;query_19;query_20;query_21;query_22;'.
 					'query_1_hash;query_2_hash;query_3_hash;query_4_hash;query_5_hash;query_6_hash;query_7_hash;query_8_hash;query_9_hash;' .
 					'query_10_hash;query_11_hash;query_12_hash;query_13_hash;query_14_hash;query_15_hash;query_16_hash;query_17_hash;' .
 					'query_18_hash;query_19_hash;query_20_hash;query_21_hash;query_22_hash;db_cache_hit_ratio' . "\n");
 
-		$line = '%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;' .
-					'%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;' .
+		$line = '%.2f;' .
+					'%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;' .
 					'%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;'.
 					'%.2f';
 
 		fwrite($fd, sprintf($line,
 
 					// tpc-h
-					$data['stats']['load'],
-					$data['stats']['pkeys'],
-					$data['stats']['fkeys'],
-					$data['stats']['indexes'],
-					$data['stats']['analyze'],
 					$data['stats']['benchmark'],
 
 					($data['queries'][1]['duration'] < QUERY_TIMEOUT) ? $data['queries'][1]['duration'] : null,
@@ -257,8 +212,6 @@
 					($data['queries'][21]['duration'] < QUERY_TIMEOUT) ? $data['queries'][21]['duration'] : null,
 					($data['queries'][22]['duration'] < QUERY_TIMEOUT) ? $data['queries'][22]['duration'] : null,
 
-					$data['updates'][1]['duration'],
-					$data['updates'][2]['duration'],
 
 					$data['stats']['hit_ratio']
 
