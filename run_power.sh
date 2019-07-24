@@ -6,7 +6,7 @@ if [ $# -ne 8 ] && [ $# -ne 11 ]; then
   exit 1
 fi
 
-SF=1
+SF=$1
 #first clear runtime directory
 RUNTIME_DIR="./runtime"
 TEMPLATES_DIR="./templates"
