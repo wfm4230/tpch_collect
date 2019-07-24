@@ -219,7 +219,7 @@ function benchmark_dss() {
 	
         u2="dss/updates/rf2_u1.sql"
         print_log "  running rf2 sql $n"
-        /usr/bin/time -a -f "rf2_u1 = %e" -o $RESULTS/results.log psql -h $IP -p $PORT -U $USER $DBNAME < $u1 > $RESULTS/results/rf2_u2 2> $RESULTS/errors/rf2_u1
+        /usr/bin/time -a -f "rf2_u1 = %e" -o $RESULTS/results.log psql -h $IP -p $PORT -U $USER $DBNAME < $u2 > $RESULTS/results/rf2_u2 2> $RESULTS/errors/rf2_u1
 
 	# collect stats again
 	psql -h $IP -p $PORT -U $USER $DBNAME -c "SELECT * FROM pg_stat_bgwriter" > $RESULTS/stats-after.log 2>> $RESULTS/stats-after.err

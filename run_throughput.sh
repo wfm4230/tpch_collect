@@ -65,7 +65,7 @@ for i in `seq 0 $DSS_TIMEOUT`
 do
   # the query is still running - check the time
   if [ -d "/proc/$query_pid" -o  -d "/proc/$update_pid" ]; then
-
+    echo "not finished"
     # the time is over, kill it with fire!
     if [ $i -eq $DSS_TIMEOUT ]; then
 
@@ -80,7 +80,8 @@ do
       psql -h $IP -p $PORT -U $USER $DBNAME -c "SELECT COUNT(*) AS tpch_backends FROM pg_stat_activity WHERE datname = '$DBNAME'"  2>&1;
 
     else
-      if [ `expr $i %60` -eq 0 ]; then
+      echo "not time out"
+      if [ `expr $i % 60` -eq 0 ]; then
         echo "after $i seconds still running"
       fi
       # the query is still running and we have time left, sleep another second
