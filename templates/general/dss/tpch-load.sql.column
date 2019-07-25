@@ -12,7 +12,7 @@ BEGIN;
                 P_COMMENT               VARCHAR(23)
         ) with (APPENDONLY=true,BLOCKSIZE=8192,ORIENTATION=COLUMN,CHECKSUM=true,OIDS=false) DISTRIBUTED BY (p_partkey);
 
-        COPY part FROM '/tmp/dss-data/part.csv' WITH csv DELIMITER '|';
+        \COPY part FROM '/tmp/dss-data/part.csv' WITH csv DELIMITER '|';
 
 COMMIT;
 
@@ -24,7 +24,7 @@ BEGIN;
                 R_COMMENT       VARCHAR(152)
         )  with (APPENDONLY=true,BLOCKSIZE=8192,ORIENTATION=COLUMN,CHECKSUM=true,OIDS=false) DISTRIBUTED BY (r_regionkey);
 
-        COPY region FROM '/tmp/dss-data/region.csv' WITH csv DELIMITER '|';
+        \COPY region FROM '/tmp/dss-data/region.csv' WITH csv DELIMITER '|';
 
 COMMIT;
 
@@ -37,7 +37,7 @@ BEGIN;
                 N_COMMENT               VARCHAR(152)
         )  with (APPENDONLY=true,BLOCKSIZE=8192,ORIENTATION=COLUMN,CHECKSUM=true,OIDS=false) DISTRIBUTED BY (n_nationkey);
 
-        COPY nation FROM '/tmp/dss-data/nation.csv' WITH csv DELIMITER '|';
+        \COPY nation FROM '/tmp/dss-data/nation.csv' WITH csv DELIMITER '|';
 
 COMMIT;
 
@@ -53,7 +53,7 @@ BEGIN;
                 S_COMMENT               VARCHAR(101)
         )  with (APPENDONLY=true,BLOCKSIZE=8192,ORIENTATION=COLUMN,CHECKSUM=true,OIDS=false) DISTRIBUTED BY (s_suppkey);
 
-        COPY supplier FROM '/tmp/dss-data/supplier.csv' WITH csv DELIMITER '|';
+        \COPY supplier FROM '/tmp/dss-data/supplier.csv' WITH csv DELIMITER '|';
 
 COMMIT;
 
@@ -70,7 +70,7 @@ BEGIN;
                 C_COMMENT               VARCHAR(117)
         )  with (APPENDONLY=true,BLOCKSIZE=8192,ORIENTATION=COLUMN,CHECKSUM=true,OIDS=false) DISTRIBUTED BY (c_custkey);
 
-        COPY customer FROM '/tmp/dss-data/customer.csv' WITH csv DELIMITER '|';
+        \COPY customer FROM '/tmp/dss-data/customer.csv' WITH csv DELIMITER '|';
 
 COMMIT;
 
@@ -84,7 +84,7 @@ BEGIN;
                 PS_COMMENT              VARCHAR(199)
         )  with (APPENDONLY=true,BLOCKSIZE=8192,ORIENTATION=COLUMN,CHECKSUM=true,OIDS=false) DISTRIBUTED BY (ps_suppkey);
 
-        COPY partsupp FROM '/tmp/dss-data/partsupp.csv' WITH csv DELIMITER '|';
+        \COPY partsupp FROM '/tmp/dss-data/partsupp.csv' WITH csv DELIMITER '|';
 
 COMMIT;
 
@@ -103,7 +103,7 @@ BEGIN;
         )  with (APPENDONLY=true,BLOCKSIZE=8192,ORIENTATION=COLUMN,CHECKSUM=true,OIDS=false) DISTRIBUTED BY (o_orderkey)
            PARTITION BY RANGE (O_ORDERDATE) (START (date '1992-01-01') INCLUSIVE END (date '2000-01-01') EXCLUSIVE EVERY (INTERVAL '1 month' ));
 
-        COPY orders FROM '/tmp/dss-data/orders.csv' WITH csv DELIMITER '|';
+        \COPY orders FROM '/tmp/dss-data/orders.csv' WITH csv DELIMITER '|';
 
 COMMIT;
 
@@ -129,6 +129,6 @@ BEGIN;
         )  with (APPENDONLY=true,BLOCKSIZE=8192,ORIENTATION=COLUMN,CHECKSUM=true,OIDS=false) DISTRIBUTED BY (l_orderkey)
            PARTITION BY RANGE (L_SHIPDATE) (START (date '1992-01-01') INCLUSIVE END (date '2000-01-01') EXCLUSIVE EVERY (INTERVAL '1 month' ));
 
-        COPY lineitem FROM '/tmp/dss-data/lineitem.csv' WITH csv DELIMITER '|';
+        \COPY lineitem FROM '/tmp/dss-data/lineitem.csv' WITH csv DELIMITER '|';
 
 COMMIT;

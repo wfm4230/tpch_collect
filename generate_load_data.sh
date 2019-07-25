@@ -3,7 +3,7 @@ if [ ! -n "$1" ] ;then
   echo "please use: $0 factor"
   exit 1
 fi
-SF=1
+SF=$1
 SRC_DATA=./test_data/${SF}G
 mkdir -p $SRC_DATA
 original_dir=`pwd`
